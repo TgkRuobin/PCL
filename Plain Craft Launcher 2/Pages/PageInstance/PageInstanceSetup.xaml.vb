@@ -369,6 +369,7 @@ PreFin:
         LabServerAuthServer.Visibility = If(Type = 4, Visibility.Visible, Visibility.Collapsed)
         TextServerAuthServer.Visibility = If(Type = 4, Visibility.Visible, Visibility.Collapsed)
         BtnServerAuthLittle.Visibility = If(Type = 4, Visibility.Visible, Visibility.Collapsed)
+        BtnServerAuthPX.Visibility = If(Type = 4, Visibility.Visible, Visibility.Collapsed)
         CardServer.TriggerForceResize()
     End Sub
 
@@ -380,6 +381,18 @@ PreFin:
         TextServerAuthServer.Text = "https://littleskin.cn/api/yggdrasil"
         TextServerAuthRegister.Text = "https://littleskin.cn/auth/register"
         TextServerAuthName.Text = "LittleSkin 登录"
+    End Sub
+
+    'mcpixelart
+    Private Sub BtnServerAuthPX_Click(sender As Object, e As EventArgs) Handles BtnServerAuthPX.Click
+        If TextServerAuthServer.Text <> "" AndAlso TextServerAuthServer.Text <> "https://skin.mcpixelart.com/api/yggdrasil" AndAlso
+            MyMsgBox("即将把第三方登录设置覆盖为 mcpixelart 皮肤站登录（skin.mcpixelart.com）。" & vbCrLf &
+                     "同时会将自动进入服务器设置为 game.mcpixelart.com。" & vbCrLf & vbCrLf & "是否确实需要覆盖当前设置？",
+                     "设置覆盖确认", "继续", "取消") = 2 Then Return
+        TextServerAuthServer.Text = "https://skin.mcpixelart.com/api/yggdrasil"
+        TextServerAuthRegister.Text = "https://skin.mcpixelart.com"
+        TextServerAuthName.Text = "mcpixelart皮肤站"
+        TextServerEnter.Text = "game.mcpixelart.com"
     End Sub
 
 #End Region

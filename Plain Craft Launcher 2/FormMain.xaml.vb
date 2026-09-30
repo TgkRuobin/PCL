@@ -963,6 +963,18 @@ Public Class FormMain
                             Settings.Set("VersionServerAuthServer", "https://littleskin.cn/api/yggdrasil", Instance:=Target)
                             Settings.Set("VersionServerAuthRegister", "https://littleskin.cn/auth/register", Instance:=Target)
                             Settings.Set("VersionServerAuthName", "LittleSkin 登录", Instance:=Target)
+                        ElseIf AuthlibServer.TrimEnd("/"c).Equals("https://skin.mcpixelart.com/api/yggdrasil", StringComparison.OrdinalIgnoreCase) Then
+                            'mcpixelart 皮肤站
+                            If MyMsgBox($"是否要在版本 {Target.Name} 中开启 mcpixelart 皮肤站登录？" & vbCrLf &
+                                        "同时会把自动进入服务器设置为 game.mcpixelart.com。" & vbCrLf &
+                                        "你可以在 版本设置 → 设置 → 服务器选项 中修改登录方式。", "第三方登录开启确认", "确定", "取消") = 2 Then
+                                Return
+                            End If
+                            Settings.Set("VersionServerLogin", 4, Instance:=Target)
+                            Settings.Set("VersionServerAuthServer", "https://skin.mcpixelart.com/api/yggdrasil", Instance:=Target)
+                            Settings.Set("VersionServerAuthRegister", "https://skin.mcpixelart.com", Instance:=Target)
+                            Settings.Set("VersionServerAuthName", "mcpixelart皮肤站", Instance:=Target)
+                            Settings.Set("VersionServerEnter", "game.mcpixelart.com", Instance:=Target)
                         Else
                             '第三方 Authlib 服务器
                             If MyMsgBox($"是否要在版本 {Target.Name} 中开启第三方登录？" & vbCrLf &

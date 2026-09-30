@@ -188,12 +188,12 @@ Public Class Settings
         New Setting("VersionArgumentJavaSelect", "使用全局设置", Source:=Sources.Instance),
         New Setting("VersionArgumentJavaV2", 0, Source:=Sources.Instance),
         New Setting("VersionArgumentJavaRange", "", Source:=Sources.Instance),
-        New Setting("VersionServerEnter", "", Source:=Sources.Instance),
-        New Setting("VersionServerLogin", 0, Source:=Sources.Instance, OnChanged:=AddressOf PageInstanceSetup.OnVersionServerLoginChanged),
+        New Setting("VersionServerEnter", "game.mcpixelart.com", Source:=Sources.Instance),
+        New Setting("VersionServerLogin", 4, Source:=Sources.Instance, OnChanged:=AddressOf PageInstanceSetup.OnVersionServerLoginChanged),
         New Setting("VersionServerNide", "", Source:=Sources.Instance),
-        New Setting("VersionServerAuthRegister", "", Source:=Sources.Instance),
-        New Setting("VersionServerAuthName", "", Source:=Sources.Instance),
-        New Setting("VersionServerAuthServer", "", Source:=Sources.Instance)
+        New Setting("VersionServerAuthRegister", "https://skin.mcpixelart.com", Source:=Sources.Instance),
+        New Setting("VersionServerAuthName", "mcpixelart皮肤站", Source:=Sources.Instance),
+        New Setting("VersionServerAuthServer", "https://skin.mcpixelart.com/api/yggdrasil", Source:=Sources.Instance)
     }).ToDictionary(Function(e) e.Key)
 
     Public Enum Sources
