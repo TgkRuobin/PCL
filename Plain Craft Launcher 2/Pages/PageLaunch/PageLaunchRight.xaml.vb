@@ -6,6 +6,8 @@ Public Class PageLaunchRight
     Private Sub Init() Handles Me.Loaded
         PanBack.ScrollToHome()
         PanLog.Visibility = ModeDebug.ToVisibility
+        '显示累计启动次数
+        LabSupportCount.Text = $"已启动游戏 {Settings.Get(Of Integer)("SystemLaunchCount")} 次 · 已打开启动器 {Settings.Get(Of Integer)("SystemCount")} 次"
         '快照版提示
         PanHint.Visibility =
             (BuildType <> BuildTypes.Release AndAlso VersionBranchMain = "Official" AndAlso

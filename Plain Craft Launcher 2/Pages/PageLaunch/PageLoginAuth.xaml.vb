@@ -211,6 +211,24 @@ Public Class PageLoginAuth
         End If
         MailVerified = False
         ApplyPanelMode()
+        '注册时如果用的是 Outlook 邮箱，提醒换一个
+        If PanelMode = "register" Then WarnOutlookMail(True)
+    End Sub
+
+    ''' <summary>已经提示过的 Outlook 邮箱，避免边输入边刷屏。</summary>
+    Private OutlookWarnedMail As String = ""
+    ''' <summary>注册时如果填的是 Outlook 邮箱，提示更换（邮件验证大概率收不到）。</summary>
+    ''' <param name="Force">为 True 时即使该邮箱已经提示过也再提示一次。</param>
+    Private Sub WarnOutlookMail(Optional Force As Boolean = False)
+        If ComboName Is Nothing Then Return
+        Dim Mail As String = ComboName.Text.Replace("¨", "").Trim
+        If Mail = "" OrElse Not SkinIsOutlookMail(Mail) Then
+            OutlookWarnedMail = ""
+            Return
+        End If
+        If Not Force AndAlso OutlookWarnedMail = Mail.ToLower Then Return
+        OutlookWarnedMail = Mail.ToLower
+        Hint("Outlook / Hotmail 邮箱经常收不到验证邮件，建议换用 QQ、163 或 Gmail 邮箱后再注册。", HintType.Red, False)
     End Sub
 
     '找回密码
@@ -224,6 +242,14 @@ Public Class PageLoginAuth
     '复制验证码
     Private Sub BorVerifyCode_Click(sender As Object, e As MouseButtonEventArgs) Handles BorVerifyCode.MouseLeftButtonUp
         ClipboardSet(SkinCurrentCode(), True, $"验证码已复制，请发送到 {SkinMailAddress}")
+    End Sub
+
+    '换一个验证码
+    Private Sub BtnRefreshCode_Click(sender As Object, e As EventArgs) Handles BtnRefreshCode.Click
+        SkinNewCode()
+        MailVerified = False '换了验证码后之前收到的邮件就不算数了
+        ApplyPanelMode()
+        Hint("已生成新的验证码，请重新发送邮件。", HintType.Blue, False)
     End Sub
 
     '检查邮件是否已收到
@@ -285,6 +311,8 @@ Public Class PageLoginAuth
             ShowHint($"请先点{vbLQ}我已发送{vbRQ}确认邮件已经收到。", True)
             Return
         End If
+        '注册时再提醒一次 Outlook 邮箱
+        If PanelMode = "register" Then WarnOutlookMail(True)
         Dim Code As String = SkinCurrentCode()
         Dim IsRegister As Boolean = PanelMode = "register"
         IsBusy = True
@@ -339,6 +367,8 @@ Public Class PageLoginAuth
     Private Sub ComboName_TextChanged(sender As Object, e As TextChangedEventArgs) Handles ComboName.TextChanged
         If sender.Text = "" Then TextPass.Password = ""
         If AniControlEnabled = 0 Then Settings.Set("CacheAuthAccess", "") '迫使其不进行 Validate
+        '注册时边输入边检查是否是 Outlook 邮箱
+        If UseSkinSite AndAlso PanelMode = "register" Then WarnOutlookMail()
     End Sub
     Private Sub TextPass_PasswordChanged(sender As Object, e As RoutedEventArgs) Handles TextPass.PasswordChanged
         If AniControlEnabled = 0 Then Settings.Set("CacheAuthAccess", "")
@@ -349,6 +379,8 @@ Public Class PageLoginAuth
         Else
             TextPass.Password = Settings.Get(Of String)("LoginAuthPass").ToString.Split("¨")(sender.SelectedIndex).Trim
         End If
+        '从记录里选了一个 Outlook 邮箱也要提示
+        If UseSkinSite AndAlso PanelMode = "register" Then WarnOutlookMail()
     End Sub
     Private Sub CheckBoxChange(sender As MyCheckBox, e As Object) Handles CheckRemember.Change
         If AniControlEnabled = 0 Then Settings.Set(sender.Tag, sender.Checked)

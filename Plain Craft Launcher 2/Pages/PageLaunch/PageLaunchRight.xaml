@@ -10,6 +10,18 @@
                           Text="快照版 PCL 包含尚未正式发布的测试功能，仅限赞助者自己使用。&#xa;请不要随意发给其他人，或是用来制作整合包哦！" />
             <StackPanel x:Name="PanCustom">
             </StackPanel>
+            <local:MyCard x:Name="PanSupport" Margin="0,0,0,15" Title="支持原作者">
+                <StackPanel Margin="22,40,22,20">
+                    <TextBlock FontSize="13" Foreground="{DynamicResource ColorBrush1}" TextWrapping="Wrap"
+                               Text="本启动器基于 龙腾猫跃 开发的 Plain Craft Launcher 2 修改而来，核心功能全部出自原作者。&#xa;如果 PCL 帮到了你，欢迎去爱发电请他喝一瓶可乐，这是对原作者最好的支持。" />
+                    <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                        <local:MyButton Height="35" MinWidth="190" Text="支持原作者（爱发电）" ColorType="Highlight"
+                                        local:CustomEventService.EventType="打开网页" local:CustomEventService.EventData="https://meloong.com/afd/a/LTCat" />
+                        <TextBlock x:Name="LabSupportCount" VerticalAlignment="Center" Margin="16,0,0,0" FontSize="13"
+                                   Foreground="{DynamicResource ColorBrushGray3}" />
+                    </StackPanel>
+                </StackPanel>
+            </local:MyCard>
             <local:MyCard Margin="0,0,0,15" Title="启动日志" x:Name="PanLog">
                 <TextBlock x:Name="LabLog" Margin="20,38,20,18" TextTrimming="None" TextWrapping="Wrap" />
             </local:MyCard>

@@ -1332,12 +1332,14 @@ Public Class PageSkinSite
             Panel.Children.Add(Next_.Root)
         Else
             Panel.Children.Add(SkinText("向 " & SkinMailAddress & " 发送邮件，只需标题填写：", 11.5, "#64716C", False, False, True))
+            Dim CodeRow As New Grid With {.Margin = New Thickness(0, 12, 0, 0)}
+            CodeRow.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
+            CodeRow.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
             Dim CodeBox As New Border With {
                 .Background = SkinBrush("#F1F4EF"),
                 .BorderBrush = SkinBrush("#9DB2A9"),
                 .BorderThickness = New Thickness(1),
                 .CornerRadius = New CornerRadius(13),
-                .Margin = New Thickness(0, 12, 0, 0),
                 .Cursor = Cursors.Hand,
                 .Child = SkinText(SecCode, 26, "#214B3E", True, True)
             }
@@ -1348,7 +1350,19 @@ Public Class PageSkinSite
             CodePanel.Children.Add(CodeCopy)
             CodeBox.Child = CodePanel
             AddHandler CodeBox.MouseLeftButtonUp, Sub() ClipboardSet(SecCode, True, "验证码已复制")
-            Panel.Children.Add(CodeBox)
+            CodeRow.Children.Add(CodeBox)
+            Dim RefreshCode = SkinButton("", "secondary", Sub()
+                                                                 '换一个验证码，之前收到的邮件随即失效
+                                                                 SecCode = SkinNewCode()
+                                                                 SecVerified = False
+                                                                 Hint("已生成新的验证码，请重新发送邮件。", HintType.Blue, False)
+                                                                 ShowSecurityModal()
+                                                             End Sub, ModSkinSiteIcons.IconRefreshCw)
+            RefreshCode.Root.Margin = New Thickness(8, 0, 0, 0)
+            RefreshCode.Root.Padding = New Thickness(11, 10, 11, 10)
+            Grid.SetColumn(RefreshCode.Root, 1)
+            CodeRow.Children.Add(RefreshCode.Root)
+            Panel.Children.Add(CodeRow)
             Dim CopyMail = SkinButton("复制验证邮箱", "secondary", Sub() ClipboardSet(SkinMailAddress, True, "验证邮箱已复制"), ModSkinSiteIcons.IconCopy, True)
             Panel.Children.Add(CopyMail.Root)
             Dim Verify = SkinButton(If(SecVerified, "验证邮件已收到", "验证是否发送成功"), If(SecVerified, "soft", "secondary"),

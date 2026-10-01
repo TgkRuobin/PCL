@@ -47,11 +47,19 @@
         <!-- 皮肤站：注册与改密的邮箱验证 -->
         <StackPanel x:Name="PanSkinVerify" Margin="0,12,0,0" Visibility="Collapsed">
             <TextBlock x:Name="LabVerifyHint" FontSize="11" TextWrapping="Wrap" LineHeight="15" />
-            <Border x:Name="BorVerifyCode" Height="34" Margin="0,6,0,0" CornerRadius="10" Background="#F1F4EF"
-                    BorderBrush="#9DB2A9" BorderThickness="1" Cursor="Hand">
-                <TextBlock x:Name="LabVerifyCode" FontFamily="Consolas" FontSize="18" FontWeight="Bold" Foreground="#214B3E"
-                           HorizontalAlignment="Center" VerticalAlignment="Center" />
-            </Border>
+            <Grid Margin="0,6,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Border x:Name="BorVerifyCode" Height="34" CornerRadius="10" Background="#F1F4EF"
+                        BorderBrush="#9DB2A9" BorderThickness="1" Cursor="Hand" ToolTip="点击复制验证码">
+                    <TextBlock x:Name="LabVerifyCode" FontFamily="Consolas" FontSize="18" FontWeight="Bold" Foreground="#214B3E"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <local:MyIconButton x:Name="BtnRefreshCode" Grid.Column="1" Width="34" Height="34" Margin="8,0,0,0" ToolTip="换一个验证码"
+                                    LogoScale="0.8" Logo="M512.0 838.3c-80.2 0-153.4-29.3-210.2-77.4l75.5-75.5c11.5-11.5 25.8-22.0 25.8-37.0a27.2 27.2 0 0 0-27.1-27.1H104.0c-27.1 0-27.1 23.9-27.1 27.1v271.9a27.1 27.1 0 0 0 27.1 27.1c15.0 0 27.8-16.6 42.5-31.2l77.9-77.9c76.6 67.7 177.1 108.9 287.4 108.9 221.7 0 404.5-166.0 431.2-380.6h-109.8c-25.9 154.2-159.7 271.9-321.3 271.9zM919.9 76.6c-15.0 0-27.8 16.6-42.5 31.3L799.5 185.8c-76.5-67.7-177.1-108.9-287.4-108.9-221.8 0-404.5 166.1-431.3 380.6H190.6c25.9-154.2 159.7-271.9 321.4-271.9 80.2 0 153.4 29.3 210.1 77.4l-75.5 75.5c-11.6 11.5-25.8 22.0-25.8 37.1a27.2 27.2 0 0 0 27.1 27.1h271.9c27.1 0 27.1-23.9 27.1-27.1V103.8a27.1 27.1 0 0 0-27.1-27.1z" />
+            </Grid>
             <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                 <local:MyButton x:Name="BtnCheckMail" Height="28" MinWidth="92" Text="我已发送" />
                 <local:MyButton x:Name="BtnVerifyDone" Height="30" MinWidth="110" Margin="8,0,0,0" ColorType="Highlight" Text="完成注册" />

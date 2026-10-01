@@ -212,6 +212,10 @@ Public Module ModMinecraft
                 Settings.Set("CacheAuthServerName", Settings.Get(Of String)("VersionServerAuthName", Instance:=value))
                 Settings.Set("CacheAuthServerRegister", Settings.Get(Of String)("VersionServerAuthRegister", Instance:=value))
             End If
+            '选好版本后校验一次与游戏服务器的版本是否一致
+            If AniControlEnabled = 0 AndAlso Settings.Get(Of String)("VersionServerAuthServer", Instance:=value) = SkinAuthServer Then
+                SkinCheckServerVersion(value)
+            End If
         End Set
     End Property
 

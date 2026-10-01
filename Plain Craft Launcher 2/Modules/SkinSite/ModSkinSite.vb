@@ -650,6 +650,82 @@ Public Module ModSkinSite
 
 #End Region
 
+#Region "版本与邮箱校验"
+
+    ''' <summary>服务器版本号的缓存，避免每次切换版本都请求一次。</summary>
+    Private SkinServerVersionCache As String = ""
+    ''' <summary>本运行期内已经提示过的版本组合，避免反复打扰。</summary>
+    Private ReadOnly SkinVersionWarned As New HashSet(Of String)
+
+    ''' <summary>
+    ''' 校验所选游戏版本与服务器版本是否一致，不一致时给出提示。
+    ''' 会在后台获取一次服务器状态，之后使用缓存。
+    ''' </summary>
+    Public Sub SkinCheckServerVersion(Instance As McInstance)
+        Try
+            If Instance Is Nothing OrElse Instance.Version Is Nothing Then Return
+            Dim ClientVersion As String = Instance.Version.VanillaName
+            If String.IsNullOrWhiteSpace(ClientVersion) Then Return
+            '已经拿到过服务器版本，直接比对
+            If SkinServerVersionCache <> "" Then
+                SkinShowVersionHint(ClientVersion, SkinServerVersionCache)
+                Return
+            End If
+            '后台获取服务器版本后再比对
+            RunInNewThread(
+            Sub()
+                Try
+                    Dim Status As SkinSiteServerStatus = SkinFetchServerStatus()
+                    If Status Is Nothing OrElse Not Status.Online OrElse String.IsNullOrWhiteSpace(Status.Version) Then Return
+                    SkinServerVersionCache = Status.Version
+                    RunInUi(Sub() SkinShowVersionHint(ClientVersion, Status.Version))
+                Catch ex As Exception
+                    Logger.Warn(ex, "获取服务器版本失败，跳过版本校验")
+                End Try
+            End Sub, "Skin Site Version Check")
+        Catch ex As Exception
+            Logger.Warn(ex, "校验游戏版本与服务器版本失败")
+        End Try
+    End Sub
+
+    ''' <summary>版本不一致时给出提示。相同的版本组合只提示一次。</summary>
+    Private Sub SkinShowVersionHint(ClientVersion As String, ServerVersion As String)
+        Dim Key As String = ClientVersion & "|" & ServerVersion
+        If SkinVersionWarned.Contains(Key) Then Return
+        SkinVersionWarned.Add(Key)
+        If SkinVersionEquals(ClientVersion, ServerVersion) Then Return
+        Hint($"你选择的版本是 {ClientVersion}，服务器当前版本为 {ServerVersion}，版本不一致可能无法进入服务器。", HintType.Red, False)
+    End Sub
+
+    ''' <summary>比较客户端与服务器的版本号，忽略大小写、v 前缀与形如 “Paper ” 的前缀。</summary>
+    Public Function SkinVersionEquals(ClientVersion As String, ServerVersion As String) As Boolean
+        Return NormalizeVersion(ClientVersion) = NormalizeVersion(ServerVersion)
+    End Function
+    Private Function NormalizeVersion(Value As String) As String
+        Dim Result As String = If(Value, "").Trim.ToLower
+        If Result.StartsWithF("v") Then Result = Result.Substring(1)
+        '部分服务端会返回 “Paper 1.20.1” 这类带前缀的版本名，取最后一段
+        If Result.Contains(" ") Then Result = Result.Split(" "c).Last.Trim()
+        Return Result
+    End Function
+
+    ''' <summary>
+    ''' 是否为 Outlook / Hotmail / Live 邮箱。
+    ''' 这些邮箱经常收不到本站的验证邮件，注册时应当建议玩家更换。
+    ''' </summary>
+    Public Function SkinIsOutlookMail(Mail As String) As Boolean
+        Dim Value As String = If(Mail, "").Trim.ToLower
+        Dim AtIndex As Integer = Value.LastIndexOf("@"c)
+        If AtIndex < 0 Then Return False
+        Dim Domain As String = Value.Substring(AtIndex + 1).Trim()
+        If Domain = "" Then Return False
+        '只看邮箱域名的主体部分，涵盖 outlook.com、outlook.jp、hotmail.com、live.cn 等
+        Dim MainDomain As String = Domain.Split("."c)(0)
+        Return MainDomain = "outlook" OrElse MainDomain = "hotmail" OrElse MainDomain = "live"
+    End Function
+
+#End Region
+
 #Region "图片处理"
 
     Private SkinImageCache As New ConcurrentDictionary(Of String, BitmapSource)

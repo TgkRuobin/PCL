@@ -352,25 +352,10 @@ Public Module ModWatcher
         Private Sub Crashed()
             If State = MinecraftState.Crashed OrElse State = MinecraftState.Ended Then Return
             State = MinecraftState.Crashed
-            '崩溃分析
-            WatcherLog("Minecraft 已崩溃，将在 2 秒后开始崩溃分析", LogLevel.Error)
-            Hint("检测到 Minecraft 出现错误，错误分析已开始……", HintType.Red)
+            '不再自动进行崩溃分析，也不弹出失败弹窗，只记录日志并做一次气泡提示
+            WatcherLog("Minecraft 已异常退出", LogLevel.Error)
+            Hint("Minecraft 异常退出，详细信息见日志。", HintType.Red, False)
             FeedbackInfo()
-            RunInNewThread(
-            Sub()
-                Try
-                    Thread.Sleep(2000)
-                    WatcherLog("崩溃分析开始")
-                    Dim Analyzer As New CrashAnalyzer(Instance)
-                    Analyzer.Collect(Instance.PathIndie, LatestLog.ToList)
-                    Analyzer.Prepare()
-                    Analyzer.Analyze()
-                    Analyzer.Output(False, New List(Of String) From
-                        {Instance.PathVersion & Instance.Name & ".json", Paths.Base & "PCL\Log1.txt", Paths.Base & "PCL\LatestLaunch.bat"})
-                Catch ex As Exception
-                    Logger.Error(ex, "崩溃分析失败")
-                End Try
-            End Sub, "Crash Analyzer")
         End Sub
 
         '强制关闭
