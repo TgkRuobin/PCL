@@ -5,20 +5,59 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:PCL"
       mc:Ignorable="d" d:DesignWidth="317.6" Margin="0,0,0,-2">
-    <Grid.RowDefinitions>
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="10" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-    </Grid.RowDefinitions>
-    <Grid.ColumnDefinitions>
-        <ColumnDefinition />
-        <ColumnDefinition Width="224" />
-    </Grid.ColumnDefinitions>
-    <local:MyComboBox Grid.Row="0" Grid.Column="1" IsEditable="True" Height="28" x:Name="ComboName" />
-    <TextBlock Text="邮箱" Grid.Row="0" VerticalAlignment="Center" />
-    <PasswordBox Grid.Row="2" Grid.Column="1" x:Name="TextPass" />
-    <TextBlock Text="密码" Grid.Row="2" VerticalAlignment="Center" />
-    <local:MyCheckBox x:Name="CheckRemember" Tag="LoginRemember" Height="20" Margin="-1,12,80,0" Text="记住密码" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" />
-    <local:MyTextButton Margin="0,12,2,0" x:Name="BtnLink" Content="注册账号" Grid.Row="3" HorizontalAlignment="Right" Grid.Column="1" Padding="20,0,0,0" HorizontalContentAlignment="Right" FontSize="13" VerticalContentAlignment="Center" />
+    <StackPanel x:Name="PanRoot">
+        <!-- 登录方式切换 -->
+        <Grid Margin="0,0,0,14">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <local:MyRadioButton x:Name="RadioSkinSite" Text="mcpixelart皮肤站" Grid.Column="0" HorizontalAlignment="Center" ColorType="Highlight" Padding="2,0" Checked="True" />
+            <local:MyRadioButton x:Name="RadioOther" Text="其他方式" Grid.Column="1" HorizontalAlignment="Center" ColorType="Highlight" Padding="2,0" />
+        </Grid>
+        <!-- 账号与密码：两种登录方式共用 -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="邮箱" Grid.Row="0" VerticalAlignment="Center" Margin="0,0,10,0" />
+            <local:MyComboBox x:Name="ComboName" Grid.Row="0" Grid.Column="1" IsEditable="True" Height="28" />
+            <TextBlock Text="密码" Grid.Row="2" VerticalAlignment="Center" Margin="0,0,10,0" />
+            <PasswordBox x:Name="TextPass" Grid.Row="2" Grid.Column="1" Height="28" />
+        </Grid>
+        <!-- 记住密码与账号相关链接 -->
+        <Grid Margin="0,11,0,0">
+            <local:MyCheckBox x:Name="CheckRemember" Tag="LoginRemember" Text="记住密码" HorizontalAlignment="Left" />
+            <StackPanel x:Name="PanLinks" Orientation="Horizontal" HorizontalAlignment="Right">
+                <local:MyTextButton x:Name="BtnLink" Content="注册账号" FontSize="13" VerticalContentAlignment="Center" />
+                <local:MyTextButton x:Name="BtnReset" Text="找回密码" Margin="14,0,0,0" FontSize="13" VerticalContentAlignment="Center" Visibility="Collapsed" />
+            </StackPanel>
+        </Grid>
+        <!-- 皮肤站：登录与材质入口 -->
+        <StackPanel x:Name="PanSkinLogin" Margin="0,14,0,0">
+            <local:MyButton x:Name="BtnSkinLogin" Height="35" Text="登录并进入游戏" ColorType="Highlight" />
+            <local:MyTextButton x:Name="BtnManageSkin" Text="管理皮肤与材质" HorizontalAlignment="Center" Margin="0,11,0,0" FontSize="13" />
+        </StackPanel>
+        <!-- 皮肤站：注册与改密的邮箱验证 -->
+        <StackPanel x:Name="PanSkinVerify" Margin="0,12,0,0" Visibility="Collapsed">
+            <TextBlock x:Name="LabVerifyHint" FontSize="11" TextWrapping="Wrap" LineHeight="15" />
+            <Border x:Name="BorVerifyCode" Height="34" Margin="0,6,0,0" CornerRadius="10" Background="#F1F4EF"
+                    BorderBrush="#9DB2A9" BorderThickness="1" Cursor="Hand">
+                <TextBlock x:Name="LabVerifyCode" FontFamily="Consolas" FontSize="18" FontWeight="Bold" Foreground="#214B3E"
+                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                <local:MyButton x:Name="BtnCheckMail" Height="28" MinWidth="92" Text="我已发送" />
+                <local:MyButton x:Name="BtnVerifyDone" Height="30" MinWidth="110" Margin="8,0,0,0" ColorType="Highlight" Text="完成注册" />
+            </StackPanel>
+        </StackPanel>
+        <!-- 提示与错误 -->
+        <local:MyHint x:Name="HintAuth" Margin="0,10,0,0" Visibility="Collapsed" />
+    </StackPanel>
 </Grid>

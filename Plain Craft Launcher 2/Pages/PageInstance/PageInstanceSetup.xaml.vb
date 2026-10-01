@@ -395,6 +395,11 @@ PreFin:
         TextServerEnter.Text = "game.mcpixelart.com"
     End Sub
 
+    '打开皮肤站账号与材质管理页面
+    Private Sub BtnOpenSkinSite_Click(sender As Object, e As MouseButtonEventArgs) Handles BtnOpenSkinSite.Click
+        SkinOpenPage()
+    End Sub
+
 #End Region
 
 #Region "Java 主类别和预览"

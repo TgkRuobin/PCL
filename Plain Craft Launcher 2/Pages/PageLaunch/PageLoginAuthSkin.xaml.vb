@@ -45,6 +45,21 @@ Public Class PageLoginAuthSkin
     End Sub
 
     Private Sub BtnEdit_Click(sender As Object, e As EventArgs) Handles BtnEdit.Click
+        '皮肤站账号：更换角色就是到皮肤站页面改默认角色，不再弹出启动器的角色选择框
+        If IsSkinSiteAccount() Then
+            If McLaunchLoader.State = LoadState.Loading Then
+                Hint("正在启动中，请稍后再更换角色！", HintType.Red, False)
+                Return
+            End If
+            '清空角色缓存，下次启动会用当前默认角色重新登录
+            Settings.Set("CacheAuthAccess", "")
+            Settings.Set("CacheAuthUuid", "")
+            Settings.Set("CacheAuthName", "")
+            McLoginAuthLoader.Input = Nothing
+            Hint("可以在皮肤站页面里把要用的角色设为默认角色。", HintType.Blue, False)
+            SkinOpenPage()
+            Return
+        End If
         If McLoginLoader.State = LoadState.Loading Then
             Logger.Warn("要求更换角色，但登录加载器繁忙")
             If TypeOf McLoginLoader.Input Is McLoginServer AndAlso CType(McLoginLoader.Input, McLoginServer).ForceReselectProfile Then
@@ -78,8 +93,19 @@ Public Class PageLoginAuthSkin
     End Sub
 
     Private Sub Skin_Click(sender As Object, e As MouseButtonEventArgs) Handles Skin.Click
+        '皮肤站账号直接打开皮肤站页面，其他认证服务器仍然跳转网页
+        If IsSkinSiteAccount() Then
+            SkinOpenPage()
+            Return
+        End If
         Dim Address As String = If(McInstanceSelected IsNot Nothing, Settings.Get(Of String)("VersionServerAuthRegister", Instance:=McInstanceSelected), Settings.Get(Of String)("CacheAuthServerRegister"))
         If String.IsNullOrEmpty(New ValidateHttp().Validate(Address)) Then OpenWebsite(Address.Replace("/auth/register", "/user/closet"))
     End Sub
+
+    ''' <summary>当前版本使用的是否是 mcpixelart 皮肤站。</summary>
+    Private Function IsSkinSiteAccount() As Boolean
+        Dim Server As String = If(McInstanceSelected Is Nothing, Settings.Get(Of String)("CacheAuthServerServer"), Settings.Get(Of String)("VersionServerAuthServer", Instance:=McInstanceSelected))
+        Return Server = SkinAuthServer
+    End Function
 
 End Class

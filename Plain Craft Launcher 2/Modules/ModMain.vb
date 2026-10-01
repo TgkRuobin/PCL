@@ -397,6 +397,7 @@ EndHint:
     Public FrmOtherHelp As PageOtherHelp
     Public FrmOtherAbout As PageOtherAbout
     Public FrmOtherTest As PageOtherTest
+    Public FrmSkinSite As PageSkinSite
 
     '登录页面声明
     Public FrmLoginLegacy As PageLoginLegacy

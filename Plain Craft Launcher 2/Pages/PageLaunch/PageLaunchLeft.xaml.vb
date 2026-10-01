@@ -689,7 +689,30 @@ ExitRefresh:
         If CurrentState = 3 Then
             FrmLaunchLeft.BtnMore.Visibility = FrmLaunchLeft.BtnVersion.Visibility
         End If
+        '皮肤站的注册 / 改密步骤里隐藏启动相关按钮，避免误触
+        If IsLoginCompact Then
+            PanLaunchButtons.Visibility = Visibility.Collapsed
+            BtnVersion.Visibility = Visibility.Collapsed
+            BtnMore.Visibility = Visibility.Collapsed
+        Else
+            PanLaunchButtons.Visibility = Visibility.Visible
+        End If
     End Sub
+
+    ''' <summary>
+    ''' 是否处于皮肤站的注册 / 改密步骤。此时会隐藏启动、版本选择与版本设置按钮。
+    ''' </summary>
+    Private _IsLoginCompact As Boolean = False
+    Public Property IsLoginCompact As Boolean
+        Get
+            Return _IsLoginCompact
+        End Get
+        Set(value As Boolean)
+            If _IsLoginCompact = value Then Return
+            _IsLoginCompact = value
+            RefreshButtonsUI()
+        End Set
+    End Property
     '取消按钮
     Private Sub BtnCancel_Click() Handles BtnCancel.Click
         McLaunchCancel()

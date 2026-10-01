@@ -745,6 +745,7 @@ Public Class FormMain
                 ShapeTitleLogo.Visibility = Visibility.Collapsed
                 LabTitleLogo.Visibility = Visibility.Visible
                 ImageTitleLogo.Visibility = Visibility.Collapsed
+                LabTitleLogo.FontSize = 14 '留出足够宽度完整显示较长的启动器名称
                 If Not IsNothing(FrmSetupUI) Then
                     FrmSetupUI.CheckLogoLeft.Visibility = Visibility.Collapsed
                     FrmSetupUI.PanLogoText.Visibility = Visibility.Visible
@@ -770,7 +771,10 @@ Public Class FormMain
         '标题栏文本
         LabTitleLogo.Text = Settings.Get(Of String)("UiLogoText")
         '标题栏文本是否居左
-        PanTitleMain.ColumnDefinitions(0).Width = New GridLength(If(Settings.Get(Of Boolean)("UiLogoLeft") AndAlso Settings.Get(Of Integer)("UiLogoType") = 0, 0, 1), GridUnitType.Star)
+        Dim IsTextLogo As Boolean = Settings.Get(Of Integer)("UiLogoType") = 2
+        Dim LogoColumnWidth As Double = If(IsTextLogo, 1.35, 1)
+        PanTitleMain.ColumnDefinitions(0).Width = New GridLength(If(Settings.Get(Of Boolean)("UiLogoLeft") AndAlso Settings.Get(Of Integer)("UiLogoType") = 0, 0, LogoColumnWidth), GridUnitType.Star)
+        PanTitleMain.ColumnDefinitions(2).Width = New GridLength(LogoColumnWidth, GridUnitType.Star)
     End Sub
 
 #End Region
@@ -1214,6 +1218,10 @@ Public Class FormMain
         ''' 帮助详情。这是一个副页面。
         ''' </summary>
         HelpDetail = 9
+        ''' <summary>
+        ''' 皮肤站。
+        ''' </summary>
+        SkinSite = 10
     End Enum
     ''' <summary>
     ''' 次要页面种类。其数值必须与 StackPanel 中的下标一致。
@@ -1351,12 +1359,34 @@ Public Class FormMain
     ''' <summary>
     ''' 切换页面，并引起对应选择 UI 的改变。
     ''' </summary>
+    ''' <summary>
+    ''' 顶层页面在标题栏导航中对应的下标。次级页面的 PageType 数值与下标无关，故需要单独映射。
+    ''' </summary>
+    Private Function TitleSelectIndex(Type As PageType) As Integer
+        Select Case Type
+            Case PageType.Launch
+                Return 0
+            Case PageType.Download
+                Return 1
+            Case PageType.Link
+                Return 2
+            Case PageType.Setup
+                Return 3
+            Case PageType.Other
+                Return 4
+            Case PageType.SkinSite
+                Return 5
+            Case Else
+                Throw New Exception($"未知的顶层页面：{Type}")
+        End Select
+    End Function
+
     Public Sub PageChange(Stack As PageStackData, Optional SubType As PageSubType = PageSubType.Default)
         If PageNameGet(Stack) = "" Then
             '切换到主页面
             PageChangeExit()
             IsChangingPage = True '防止下面的勾选直接触发了 PageChangeActual
-            CType(PanTitleSelect.Children(Stack), MyRadioButton).SetChecked(True, True, PageNameGet(PageCurrent) = "")
+            CType(PanTitleSelect.Children(TitleSelectIndex(Stack)), MyRadioButton).SetChecked(True, True, PageNameGet(PageCurrent) = "")
             IsChangingPage = False
             Select Case Stack.Page
                 Case PageType.Download
@@ -1383,7 +1413,7 @@ Public Class FormMain
     ''' <summary>
     ''' 通过点击导航栏改变页面。
     ''' </summary>
-    Private Sub BtnTitleSelect_Click(sender As MyRadioButton, raiseByMouse As Boolean) Handles BtnTitleSelect0.Check, BtnTitleSelect1.Check, BtnTitleSelect2.Check, BtnTitleSelect3.Check, BtnTitleSelect4.Check
+    Private Sub BtnTitleSelect_Click(sender As MyRadioButton, raiseByMouse As Boolean) Handles BtnTitleSelect0.Check, BtnTitleSelect1.Check, BtnTitleSelect2.Check, BtnTitleSelect3.Check, BtnTitleSelect4.Check, BtnTitleSelect5.Check
         If IsChangingPage Then Return
         PageChangeActual(Val(sender.Tag))
     End Sub
@@ -1464,6 +1494,9 @@ Public Class FormMain
                 Case PageType.Setup '设置
                     If FrmSetupLeft Is Nothing Then FrmSetupLeft = New PageSetupLeft
                     PageChangeAnim(FrmSetupLeft, FrmSetupLeft.PageGet(SubType))
+                Case PageType.SkinSite '皮肤站
+                    If FrmSkinSite Is Nothing Then FrmSkinSite = New PageSkinSite
+                    PageChangeAnim(New MyPageLeft, FrmSkinSite)
                 Case PageType.Other '更多
                     If FrmOtherLeft Is Nothing Then FrmOtherLeft = New PageOtherLeft
                     PageChangeAnim(FrmOtherLeft, FrmOtherLeft.PageGet(SubType))

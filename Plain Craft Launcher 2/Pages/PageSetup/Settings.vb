@@ -144,8 +144,8 @@ Public Class Settings
         New Setting("UiCustomType", 0, OnChanged:=AddressOf PageSetupUI.OnMainPageTypeChanged),
         New Setting("UiCustomPreset", 0),
         New Setting("UiCustomNet", ""),
-        New Setting("UiLogoType", 1, OnChanged:=AddressOf FormMain.UpdateBackgroundAndTitleBar),
-        New Setting("UiLogoText", "", OnChanged:=AddressOf FormMain.UpdateBackgroundAndTitleBar),
+        New Setting("UiLogoType", 2, OnChanged:=AddressOf FormMain.UpdateBackgroundAndTitleBar),
+        New Setting("UiLogoText", "PCL2 的 mcpixelart 魔改版", OnChanged:=AddressOf FormMain.UpdateBackgroundAndTitleBar),
         New Setting("UiLogoLeft", False, OnChanged:=AddressOf FormMain.UpdateBackgroundAndTitleBar),
         New Setting("UiMusicVolume", 500),
         New Setting("UiMusicStop", False),
@@ -195,6 +195,24 @@ Public Class Settings
         New Setting("VersionServerAuthName", "mcpixelart皮肤站", Source:=Sources.Instance),
         New Setting("VersionServerAuthServer", "https://skin.mcpixelart.com/api/yggdrasil", Source:=Sources.Instance)
     }).ToDictionary(Function(e) e.Key)
+
+    ''' <summary>
+    ''' 皮肤站（mcpixelart）相关的设置项。
+    ''' 这些设置项没有写在上面的集合初始化器里：VB 在集合初始化器末尾追加元素时会触发解析异常（见 #SkinSite）。
+    ''' </summary>
+    Shared Sub New()
+        AddSkinSiteSetting("SkinSiteToken", "")
+        AddSkinSiteSetting("SkinSiteMail", "")
+        AddSkinSiteSetting("SkinSitePass", "")
+        AddSkinSiteSetting("SkinSiteVerifyCode", "")
+        AddSkinSiteSetting("SkinSiteRemember", True)
+        AddSkinSiteSetting("SkinSiteOneKey", True)
+        AddSkinSiteSetting("SkinSiteCache", "")
+    End Sub
+    Private Shared Sub AddSkinSiteSetting(Key As String, Value As Object)
+        Entries(Key) = New Setting(Key, Value, Source:=Sources.Registry,
+                                   Encrypted:=(Key <> "SkinSiteRemember" AndAlso Key <> "SkinSiteOneKey"))
+    End Sub
 
     Public Enum Sources
         Normal

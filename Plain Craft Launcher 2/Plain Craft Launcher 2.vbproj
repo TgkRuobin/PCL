@@ -312,6 +312,12 @@
     <Compile Include="Pages\PageInstance\PageInstanceExport.xaml.vb">
       <DependentUpon>PageInstanceExport.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\PageSkinSite\PageSkinSite.xaml.vb">
+      <DependentUpon>PageSkinSite.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\SkinSite\ModSkinSite.vb" />
+    <Compile Include="Modules\SkinSite\ModSkinSiteUi.vb" />
+    <Compile Include="Modules\SkinSite\ModSkinSiteIcons.vb" />
     <Compile Include="Pages\PageInstance\PageInstanceLeft.xaml.vb">
       <DependentUpon>PageInstanceLeft.xaml</DependentUpon>
     </Compile>
@@ -575,6 +581,12 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\PageSkinSite\PageSkinSite.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Resource Include="Images\SkinSite\hero.jpg" />
+    <Resource Include="Images\SkinSite\qq-group.png" />
     <Page Include="Pages\PageOther\PageOtherTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
